@@ -1,5 +1,5 @@
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -13,12 +13,12 @@ interface State {
 
 /**
  * AppErrorBoundary handles unexpected system logic errors.
- * Explicitly extending Component with Props and State generics
+ * Explicitly extending React.Component with Props and State generics
  * ensures that 'this.props' and 'this.state' are correctly recognized
  * by the TypeScript compiler across all methods.
  */
-// Fix: Use Component explicitly from 'react' to ensure base class members like 'props' are correctly typed and visible.
-export class AppErrorBoundary extends Component<Props, State> {
+// Fix: Use React.Component explicitly to ensure base class members like 'props' are correctly typed and visible.
+export class AppErrorBoundary extends React.Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null

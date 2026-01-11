@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Ward, AQILevel, DashboardTheme } from '../types';
-import { Activity, ArrowUpRight } from 'lucide-react';
+import { Activity, ArrowUpRight, ShieldCheck } from 'lucide-react';
 import TrendSparkline from './TrendSparkline';
 
 interface WardCardProps {
@@ -35,76 +35,80 @@ const WardCard: React.FC<WardCardProps> = ({ ward, onClick, index, theme }) => {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ 
-        duration: 0.7, 
-        delay: index * 0.04, 
+        duration: 0.8, 
+        delay: index * 0.05, 
         ease: appleBezier 
       }}
       whileHover={{ 
-        y: -12, 
-        scale: 1.01,
-        boxShadow: isDark ? "0 60px 120px -30px rgba(0,0,0,0.6)" : "0 30px 60px rgba(0,0,0,0.05)",
-        transition: { duration: 0.4, ease: appleBezier } 
+        y: -16, 
+        scale: 1.015,
+        transition: { duration: 0.5, ease: appleBezier } 
       }}
       onClick={() => onClick(ward)}
-      className="glass-card group relative p-14 rounded-[64px] cursor-pointer flex flex-col justify-between h-[540px] overflow-hidden"
+      className={`relative p-12 rounded-[64px] cursor-pointer flex flex-col justify-between h-[560px] overflow-hidden transition-all duration-500
+        ${isDark 
+          ? 'bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]' 
+          : 'bg-black/[0.01] border border-black/[0.08] hover:bg-black/[0.02] hover:border-black/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)]'
+        } backdrop-blur-[60px] group`}
     >
-      <div className="absolute top-14 right-14 opacity-0 group-hover:opacity-40 transition-all duration-600">
-        <ArrowUpRight size={26} />
+      {/* Dynamic Background Glow */}
+      <div 
+        className="absolute -top-20 -right-20 w-64 h-64 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-1000"
+        style={{ background: statusColor }}
+      />
+
+      <div className="absolute top-12 right-12 opacity-0 group-hover:opacity-60 transition-all duration-500 transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0">
+        <ArrowUpRight size={24} />
       </div>
 
       <div className="relative z-10">
-        <div className="flex items-center gap-5 mb-12 opacity-30 group-hover:opacity-100 transition-opacity">
-          <span className="font-humanist text-[10px] italic">Sector Registry Node</span>
+        <div className="flex items-center gap-4 mb-10 opacity-30 group-hover:opacity-100 transition-opacity duration-500">
+          <ShieldCheck size={14} className="text-indigo-400" />
+          <span className="text-[9px] font-black uppercase tracking-[0.4em]">Sector Registry Node ${ward.id}</span>
           <div className={`h-[1px] flex-1 ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
         </div>
         
-        {/* L SCALE: Ward Card Title */}
         <motion.h3 
           layoutId={`ward-title-${ward.id}`}
-          className={`text-4xl font-black tracking-tight mb-5 leading-none transition-colors ${isDark ? 'text-white/90 group-hover:text-white' : 'text-black/90 group-hover:text-black'}`}
+          className={`text-4xl font-black tracking-tighter mb-4 leading-none transition-colors ${isDark ? 'text-white' : 'text-black'}`}
         >
           {ward.name}
         </motion.h3>
         
-        <div className="flex items-center gap-4">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: statusColor }} />
-          <span className="text-[10px] font-black uppercase tracking-[0.5em] opacity-30 group-hover:opacity-80 transition-opacity" style={{ color: statusColor }}>
-            {ward.status} Status
+        <div className="flex items-center gap-3">
+          <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: statusColor }} />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: statusColor }}>
+            {ward.status} PHASE
           </span>
         </div>
       </div>
 
-      <div className="relative z-10 my-12 opacity-30 group-hover:opacity-100 transition-all duration-1000">
+      <div className="relative z-10 my-8 opacity-40 group-hover:opacity-100 transition-all duration-1000 transform group-hover:scale-[1.05]">
         <TrendSparkline color={statusColor} />
       </div>
 
-      <div className={`relative z-10 flex items-end justify-between pt-12 border-t ${isDark ? 'border-white/5' : 'border-black/5'}`}>
+      <div className={`relative z-10 flex items-end justify-between pt-10 border-t ${isDark ? 'border-white/10' : 'border-black/10'}`}>
         <div className="flex flex-col">
-          {/* Numeric Scale Reduced for Card Context */}
           <motion.div 
             layoutId={`ward-aqi-${ward.id}`}
-            className="text-[80px] font-black tracking-tighter leading-none text-cutout tabular-nums"
+            className="text-[90px] font-black tracking-tighter leading-none text-cutout tabular-nums"
           >
             {ward.aqi}
           </motion.div>
-          <span className="font-humanist text-[10px] italic opacity-20 mt-5 group-hover:opacity-50 transition-opacity">Metropolitan Intel Hub</span>
+          <span className="text-[9px] font-black uppercase tracking-[0.4em] opacity-20 mt-4 group-hover:opacity-50 transition-opacity">Response Index</span>
         </div>
         
-        <div className="text-right flex flex-col items-end gap-4 opacity-30 group-hover:opacity-100 transition-opacity">
-          <div className={`flex items-center gap-4 px-5 py-2.5 rounded-full border ${isDark ? 'bg-white/5 border-white/5' : 'bg-black/5 border-black/5'}`}>
-            <Activity size={12} className="opacity-50" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Operational</span>
+        <div className="text-right flex flex-col items-end gap-3 opacity-40 group-hover:opacity-100 transition-opacity">
+          <div className={`flex items-center gap-3 px-4 py-1.5 rounded-full border ${isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'}`}>
+            <Activity size={10} className="animate-pulse" />
+            <span className="text-[9px] font-black uppercase tracking-widest">Live Telemetry</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">{ward.primarySource}</p>
+          <p className="text-[9px] font-black uppercase tracking-widest opacity-40">{ward.primarySource}</p>
         </div>
       </div>
 
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity duration-1200 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute -inset-40 bg-gradient-to-br from-transparent via-white/30 to-transparent animate-subtle-drift" 
-          style={{ filter: 'blur(130px)' }}
-        />
-      </div>
+      {/* Subtle Inner Glow Layer */}
+      <div className={`absolute inset-0 rounded-[64px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000 border border-white/5 ring-1 ring-white/10 inset-shadow-sm`} />
     </motion.div>
   );
 };
